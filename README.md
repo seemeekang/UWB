@@ -12,6 +12,8 @@ The implementation schemes and self-calibration methods will be tested using Dec
 
 For a detailed step-by-step guide, check out the [Wiki](https://github.com/jonathanrjpereira/UWB/wiki).
 
+![DWM1001](https://github.com/jonathanrjpereira/UWB/blob/master/img/IMG_2021.jpg)
+
 # Table of Contents
 ## [Ultra-wideband (UWB)](https://github.com/jonathanrjpereira/UWB/wiki/Ultra-wideband-(UWB))
 ## Implementation Schemes
