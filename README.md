@@ -19,6 +19,7 @@ For a detailed step-by-step guide, check out the [Wiki](https://github.com/jonat
 ## Implementation Schemes
 * Distance Measuring
   * [Time of Flight (ToF)](https://github.com/jonathanrjpereira/UWB/wiki/Time-of-Flight-(ToF))
+  * [Two Way Ranging (TWR) - DWM1001](https://github.com/jonathanrjpereira/UWB/wiki/Two-Way-Ranging-(TWR):-Decawave-DWM1001)
 * Positioning
   * [Trilateration](https://github.com/jonathanrjpereira/UWB/wiki/Trilateration)
 
