@@ -69,7 +69,13 @@ def tag_distance_matrix_error(tag_coordinates, og_coordinates, cal_tag_coordinat
 
     tag_MSE = np.square(og_distance_matrix - cal_distance_matrix).mean()
     print("Tag MSE \n",tag_MSE)
-    return tag_MSE    
+
+    node_count = len(og_coordinates)
+    sum_og_distance_matrix = np.sum(og_distance_matrix)
+    avg_og_distance_matrix = (sum_og_distance_matrix) / (2 * node_count)
+    tag_MSE_pcnt = (tag_MSE * 100) / avg_og_distance_matrix
+
+    return tag_MSE, tag_MSE_pcnt   
     
 
 # Non - Flipped Nodes Example
@@ -105,7 +111,7 @@ plt.scatter(tag_coordinates[0][0], tag_coordinates[0][1],c='red')
 # Calculated Coordinate Plot
 cal_coordinates, MSE = compute_mds(og_distance_matrix)
 cal_tag_coordinates = compute_tag_location(tag_coordinates, og_coordinates, cal_coordinates)
-cal_tag_MSE = tag_distance_matrix_error(tag_coordinates, og_coordinates, cal_tag_coordinates, cal_coordinates)
+cal_tag_MSE, cal_tag_MSE_pcnt = tag_distance_matrix_error(tag_coordinates, og_coordinates, cal_tag_coordinates, cal_coordinates)
 
 ax2 = fig.add_subplot(132)
 ax2.title.set_text("Calculated MDS \n Avg Distance Error: " + str(round(MSE,10))
@@ -123,12 +129,13 @@ in_noise_avg = np.square(og_distance_matrix - noise_og_distance_matrix).mean()
 # Noisy Input Coordinate Plot
 noise_cal_coordinates, noise_MSE = compute_mds(noise_og_distance_matrix)
 noise_cal_tag_coordinates = compute_tag_location(tag_coordinates, og_coordinates, noise_cal_coordinates)
-noise_cal_tag_MSE = tag_distance_matrix_error(tag_coordinates, og_coordinates, noise_cal_tag_coordinates, noise_cal_coordinates)
+noise_cal_tag_MSE, noise_cal_tag_MSE_pcnt = tag_distance_matrix_error(tag_coordinates, og_coordinates, noise_cal_tag_coordinates, noise_cal_coordinates)
 
 ax2 = fig.add_subplot(133)
 ax2.title.set_text("Calculated MDS (Noisy Input) \n Avg Input Noise: " + str(round(in_noise_avg,6)) 
 + "\n Avg Distance Error: " + str(round(noise_MSE,6))
-+ "\n Avg Tag Distance Error: " + str(round(noise_cal_tag_MSE,10)))
++ "\n Avg Tag Distance Error: " + str(round(noise_cal_tag_MSE,10))
++ "\n Avg Tag Distance Error: " + str(round(noise_cal_tag_MSE_pcnt,3)) + "%")
 
 plt.scatter(noise_cal_coordinates[:, 0], noise_cal_coordinates[:, 1])
 plt.scatter(noise_cal_tag_coordinates[0], noise_cal_tag_coordinates[1],c='red')
