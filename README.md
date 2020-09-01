@@ -28,4 +28,4 @@ For a detailed step-by-step guide, check out the [Wiki](https://github.com/jonat
 * [MDS with 2 DWM1001 Modules](https://github.com/jonathanrjpereira/UWB/wiki/MDS-with-2-DWM1001-Modules)
 * [Initialized Positions](https://github.com/jonathanrjpereira/UWB/wiki/Initialized-Positions)
 * [Robust Quads](https://github.com/jonathanrjpereira/UWB/wiki/Robust-Quads)
-
+* [Robust Triangle and Radio Range (RTRR)](https://github.com/jonathanrjpereira/UWB/wiki/Robust-Triangle-and-Radio-Range-(RTRR))
