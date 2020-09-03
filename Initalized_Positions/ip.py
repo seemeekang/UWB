@@ -37,10 +37,10 @@ def trilateration(node_to_trilaterate, initial_localized_nodes, initial_localize
 
     a = np.array([[A, B], [D, E]])
     b = np.array([C, F])
-    tag_coordinates = np.linalg.solve(a, b)
-    tag_coordinates = np.array(tag_coordinates).tolist()
-    # print("Tag Coordinate:", tag_coordinates)
-    return tag_coordinates
+    anchor_coordinates = np.linalg.solve(a, b)
+    anchor_coordinates = np.array(anchor_coordinates).tolist()
+    # print("Tag Coordinate:", anchor_coordinates)
+    return anchor_coordinates
 
 
 # Get list of robust nodes with trilaterated coordinates
