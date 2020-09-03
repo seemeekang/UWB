@@ -65,12 +65,13 @@ def compute_intialized_positions(distance_matrix):
     alpha = (pow(d_ab,2) + pow(d_ac,2) - pow(d_bc,2)) / (2*d_ab*d_ac)
     loc_best.append([node_name[2],(d_ac*alpha,d_ac*math.sqrt(1-pow(alpha,2)))]) # p2
 
+    # Keep a tab of Intially localized nodes. 
     trilaterated_nodes = [node_name[0], node_name[1], node_name[2]]
     initial_localized_coordinates = [loc_best[0][1], loc_best[1][1], loc_best[2][1]]
     trilaterated_nodes_coordinates = initial_localized_coordinates
     initial_localized_nodes = trilaterated_nodes
     
-
+    # Localize the remaining anchor nodes using the Intially Localized nodes.
     for node in node_name:
         if node not in trilaterated_nodes:
             node_coordinates = trilateration(node, initial_localized_nodes, initial_localized_coordinates, distance_matrix)
