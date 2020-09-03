@@ -22,13 +22,6 @@ def compute_mds(og_distance_matrix):
     cal_coordinates = mds.fit(og_distance_matrix).embedding_
     print("Calculated Coordinates \n",cal_coordinates)
 
-    # Recompute the Distance Matrix from the Original Distance Matrix
-    cal_distance_matrix = euclidean_distances(cal_coordinates)
-    print("Calculated Distance Matrix \n",cal_distance_matrix)
-
-    # Calculate the Mean Square Error between the Original Distance Matrix and Recomputed Distance Matrix.
-    # MSE = np.square(og_distance_matrix - cal_distance_matrix).mean()
-    # print("Mean Square Error \n",MSE)
     return cal_coordinates
 
 def compute_tag_location(tag_coordinates, og_coordinates, cal_coordinates, measured_distance):
