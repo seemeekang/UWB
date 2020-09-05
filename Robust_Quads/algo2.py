@@ -45,7 +45,7 @@ def trilateration(node_to_trilaterate, initial_localized_nodes, initial_localize
 
 
 # Get list of robust nodes with trilaterated coordinates
-def compute_RQ_algo2(robust_nodes, robust_quads, distance_matrix):
+def trilaterate_robust_nodes(robust_nodes, robust_quads, distance_matrix):
     loc_best = [] #Locsbest
     trilaterated_robust_nodes = []
     trilaterated_robust_nodes_coordinates = []
@@ -67,6 +67,7 @@ def compute_RQ_algo2(robust_nodes, robust_quads, distance_matrix):
     trilaterated_robust_nodes_coordinates = initial_localized_coordinates
     initial_localized_nodes = trilaterated_robust_nodes
     
+
     for node in robust_nodes:
         if node not in trilaterated_robust_nodes:
             node_coordinates = trilateration(node, initial_localized_nodes, initial_localized_coordinates, distance_matrix)
@@ -74,12 +75,31 @@ def compute_RQ_algo2(robust_nodes, robust_quads, distance_matrix):
             trilaterated_robust_nodes.append(node)
             trilaterated_robust_nodes_coordinates.append(node_coordinates)
 
+    sort_loc_best = sorted(loc_best, key=lambda x: x[0])
+
     # print(initial_localized_coordinates)    
-    print("Loc_best", loc_best)
+    print("Sorted Loc_best", sort_loc_best)
     # print("trilaterated_robust_nodes", trilaterated_robust_nodes)
     # print("trilaterated_robust_nodes_coordinates", trilaterated_robust_nodes_coordinates)
 
-    return np.array(trilaterated_robust_nodes_coordinates)
+    return np.array(trilaterated_robust_nodes_coordinates), sort_loc_best
+
+def compute_RQ_algo2(og_distance_matrix, dmin):
+    robust_nodes, robust_quads, robust_tris = compute_RQ_algo1(og_distance_matrix, dmin)
+
+    node_count = len(og_distance_matrix)
+
+    # Node Name List Creation
+    node_name = list(range(0, node_count))
+
+    trilaterated_robust_node_data, sort_loc_best = trilaterate_robust_nodes(robust_nodes, robust_quads, og_distance_matrix)
+    print("trilaterated_robust_node_data", (trilaterated_robust_node_data))
+
+    # non_trilaterated_nodes = node_name - robust_nodes
+    non_trilaterated_nodes = [node for node in node_name if node not in robust_nodes]
+    print("non_trilaterated_nodes", non_trilaterated_nodes)
+
+    return robust_nodes, trilaterated_robust_node_data, non_trilaterated_nodes, robust_tris, sort_loc_best
 
 
 def main():
@@ -105,11 +125,8 @@ def main():
     og_distance_matrix = euclidean_distances(og_coordinates)
     print("Original Distance Matrix \n",og_distance_matrix)
 
-    robust_nodes, robust_quads = compute_RQ_algo1(og_distance_matrix, dmin)
-
-    trilaterated_robust_node_data = compute_RQ_algo2(robust_nodes, robust_quads, og_distance_matrix)
+    robust_nodes, trilaterated_robust_node_data, non_trilaterated_nodes, robust_tris, sort_loc_best = compute_RQ_algo2(og_distance_matrix, dmin)
     print("trilaterated_robust_node_data", (trilaterated_robust_node_data))
-
 
     # Plot the two graphs
     fig = plt.figure()

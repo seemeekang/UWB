@@ -16,6 +16,7 @@ def test_node_robustness(test_quad, robust_nodes):
     result =  all(elem in robust_nodes  for elem in test_quad)
     return result
 
+# Get triangle angle/side data in order to test it's robustness
 def get_triangle_angles(node1, node2, node3, distance_matrix):
     # length of sides be a, b, c  
     a = distance_matrix[node1, node2]  
@@ -52,6 +53,7 @@ def get_triangle_angles(node1, node2, node3, distance_matrix):
     sides = [a, b, c]
     return angles, sides   
 
+# Test if a Triangle is robust
 def test_triangle_robustnes(node1, node2, node3, distance_matrix, dmin):
     angles, sides = get_triangle_angles(node1, node2, node3, distance_matrix)
     smallest_angle = min(angles)
@@ -73,15 +75,21 @@ def test_quad_robustness(test_quad, distance_matrix, dmin):
 
     if d012 & d013 & d023 & d123:
         quad_robustness = True
+        robust_triangles = [(test_quad[0], test_quad[1], test_quad[2]), 
+                            (test_quad[0], test_quad[1], test_quad[3]), 
+                            (test_quad[0], test_quad[2], test_quad[3]), 
+                            (test_quad[1], test_quad[2], test_quad[3])]
     else:
         quad_robustness = False
-    return quad_robustness
+        robust_triangles = []
+    return quad_robustness, robust_triangles
 
 def compute_RQ_algo1(distance_matrix, dmin):
     node_count = len(distance_matrix)
 
     # Node Name List Creation
     node_name = list(range(0, node_count))
+    print("All nodes:", node_name)
     test_node_comb = list(combinations(node_name,4))
     test_quad_name = []
     for test_quad in test_node_comb:
@@ -92,25 +100,29 @@ def compute_RQ_algo1(distance_matrix, dmin):
     # Create list of Robust Nodes and Robust Quads
     robust_nodes = []
     robust_quads = []
+    robust_tris = []
 
     for test_quad in test_quad_name:
         if test_node_robustness(test_quad, robust_nodes) == True:
             continue
         else:
-            quad_robust_check = test_quad_robustness(test_quad, distance_matrix, dmin)
+            quad_robust_check, robust_tris_per_quad = test_quad_robustness(test_quad, distance_matrix, dmin)
 
         if quad_robust_check == True:
-            # Append the Robust Nodes
+            # Append the Robust Nodes and Robust Triangles
             robust_nodes.extend(test_quad)
-            # Remove duplicate Robust Nodes
-            robust_nodes = list(set(robust_nodes)) 
+            robust_tris.extend(robust_tris_per_quad)
+            # Remove duplicate Robust Nodes and Robust Triangles
+            robust_nodes = list(set(robust_nodes))
+            robust_tris = list(set(robust_tris))
             # Append the Robust Quad
             robust_quads.append(test_quad)
 
     print("Robust Nodes", robust_nodes)
     print("Robust Quads", robust_quads)
+    print("Robust Triangles", robust_tris)
 
-    return robust_nodes, robust_quads
+    return robust_nodes, robust_quads, robust_tris
 
 
 def main():
@@ -133,7 +145,7 @@ def main():
     og_distance_matrix = euclidean_distances(og_coordinates)
     print("Original Distance Matrix \n",og_distance_matrix)
 
-    robust_nodes, robust_quads = compute_RQ_algo1(og_distance_matrix, dmin)
+    robust_nodes, robust_quads, robust_tris = compute_RQ_algo1(og_distance_matrix, dmin)
 
     # Plot the two graphs
     fig = plt.figure()
