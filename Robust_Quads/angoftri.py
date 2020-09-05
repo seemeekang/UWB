@@ -1,3 +1,5 @@
+# Original Source: https://www.geeksforgeeks.org/find-angles-given-triangle/
+
 # Python3 code to find all three angles  
 # of a triangle given coordinate  
 # of all three vertices  
@@ -43,10 +45,15 @@ def printAngle(A, B, C):
     return angles 
 
 
+def main():
+    A = (0, 0) 
+    B = (0, 1)  
+    C = (1, 0) 
+    alpha, betta, gamma = printAngle(A, B, C)
+    
+    print("Alpha: ", alpha)  
+    print("Betta: ", betta) 
+    print("Gamma: ", gamma) 
 
-# Driver code 
-A = (0, 0) 
-B = (0, 1)  
-C = (1, 0) 
-  
-printAngle(A, B, C)
+if __name__ == "__main__":
+    main()
