@@ -11,30 +11,6 @@ import math
 from itertools import combinations  
 
 
-# Threshold Measurement Noise
-dmin = 0.0
-
-# Non - Flipped Nodes Example
-x_og_data = [0,0,2,2,28,10,100]
-y_og_data = [0,2,0,2,35,80,100]
-
-# Flipped Nodes Example
-# x_og_data = [0,0,2,2,100]
-# y_og_data = [0,2,0,2,100]
-
-
-# Total nuber of Anchor nodes
-node_count = len(x_og_data)
-
-# The Original (Global) Coordinates of the Anchor Nodes.
-og_coordinates = list(zip(x_og_data, y_og_data))
-print("Original Coordinates \n",og_coordinates)
-
-# Create a Distance Matrix from the Original Coordinates.
-og_distance_matrix = euclidean_distances(og_coordinates)
-print("Original Distance Matrix \n",og_distance_matrix)
-
-
 # Test if all test_nodes are already Robust
 def test_node_robustness(test_quad, robust_nodes):
     result =  all(elem in robust_nodes  for elem in test_quad)
@@ -101,52 +77,81 @@ def test_quad_robustness(test_quad, distance_matrix, dmin):
         quad_robustness = False
     return quad_robustness
 
+def compute_RQ_algo1(distance_matrix, dmin):
+    node_count = len(distance_matrix)
 
-# Node Name List Creation
-node_name = list(range(0, node_count))
-test_node_comb = list(combinations(node_name,4))
-test_quad_name = []
-for test_quad in test_node_comb:
-    if test_quad[0] == 0:
-        test_quad_name.append(test_quad)
-print(test_quad_name)
+    # Node Name List Creation
+    node_name = list(range(0, node_count))
+    test_node_comb = list(combinations(node_name,4))
+    test_quad_name = []
+    for test_quad in test_node_comb:
+        if test_quad[0] == 0:
+            test_quad_name.append(test_quad)
+    print(test_quad_name)
 
-# Create list of Robust Nodes and Robust Quads
-robust_nodes = []
-robust_quads = []
+    # Create list of Robust Nodes and Robust Quads
+    robust_nodes = []
+    robust_quads = []
 
-for test_quad in test_quad_name:
-    if test_node_robustness(test_quad, robust_nodes) == True:
-        continue
-    else:
-        quad_robust_check = test_quad_robustness(test_quad, og_distance_matrix, dmin)
+    for test_quad in test_quad_name:
+        if test_node_robustness(test_quad, robust_nodes) == True:
+            continue
+        else:
+            quad_robust_check = test_quad_robustness(test_quad, distance_matrix, dmin)
 
-    if quad_robust_check == True:
-        # Append the Robust Nodes
-        robust_nodes.extend(test_quad)
-        # Remove duplicate Robust Nodes
-        robust_nodes = list(set(robust_nodes)) 
-        # Append the Robust Quad
-        robust_quads.append(test_quad)
+        if quad_robust_check == True:
+            # Append the Robust Nodes
+            robust_nodes.extend(test_quad)
+            # Remove duplicate Robust Nodes
+            robust_nodes = list(set(robust_nodes)) 
+            # Append the Robust Quad
+            robust_quads.append(test_quad)
 
-print("Robust Nodes", robust_nodes)
-print("Robust Quads", robust_quads)
+    print("Robust Nodes", robust_nodes)
+    print("Robust Quads", robust_quads)
+
+    return robust_nodes, robust_quads
 
 
-# Plot the two graphs
-fig = plt.figure()
+def main():
+    # Threshold Measurement Noise
+    dmin = 0.0
 
-# Original Coordinate Plot
-ax1 = fig.add_subplot(121)
-ax1.title.set_text('Original')
-og_coordinates = [list(ele) for ele in og_coordinates]
-og_coordinates = np.array(og_coordinates)
-# print(og_coordinates) 
-plt.scatter(og_coordinates[:, 0], og_coordinates[:, 1])
+    # Non - Flipped Nodes Example
+    # x_og_data = [0,0,2,2,28,10,100]
+    # y_og_data = [0,2,0,2,35,80,100]
 
-ax2 = fig.add_subplot(122)
-ax2.title.set_text("Robust Node Quads")
-plt.scatter(og_coordinates[:, 0], og_coordinates[:, 1], c='red')
-plt.scatter(og_coordinates[robust_nodes, 0], og_coordinates[robust_nodes, 1], c='green')
+    # Flipped Nodes Example
+    x_og_data = [0,0,2,2,100]
+    y_og_data = [0,2,0,2,100]
 
-plt.show()
+    # The Original (Global) Coordinates of the Anchor Nodes.
+    og_coordinates = list(zip(x_og_data, y_og_data))
+    print("Original Coordinates \n",og_coordinates)
+
+    # Create a Distance Matrix from the Original Coordinates.
+    og_distance_matrix = euclidean_distances(og_coordinates)
+    print("Original Distance Matrix \n",og_distance_matrix)
+
+    robust_nodes, robust_quads = compute_RQ_algo1(og_distance_matrix, dmin)
+
+    # Plot the two graphs
+    fig = plt.figure()
+
+    # Original Coordinate Plot
+    ax1 = fig.add_subplot(121)
+    ax1.title.set_text('Original')
+    og_coordinates = [list(ele) for ele in og_coordinates]
+    og_coordinates = np.array(og_coordinates)
+    # print(og_coordinates) 
+    plt.scatter(og_coordinates[:, 0], og_coordinates[:, 1])
+
+    ax2 = fig.add_subplot(122)
+    ax2.title.set_text("Robust Node Quads")
+    plt.scatter(og_coordinates[:, 0], og_coordinates[:, 1], c='red')
+    plt.scatter(og_coordinates[robust_nodes, 0], og_coordinates[robust_nodes, 1], c='green')
+
+    plt.show()
+
+if __name__ == "__main__":
+    main()
