@@ -26,8 +26,16 @@ def calculate_InputAvgNoise(og_distance_matrix, noise_og_distance_matrix):
     in_noise_avg = np.square(og_distance_matrix - noise_og_distance_matrix).mean()
     return round(in_noise_avg, 2)
 
+# Calculate inter-node stddev input noise added to a distance matrix
+def calculate_StdDevNoise(og_distance_matrix, noise_og_distance_matrix):
+    # in_noise_stddev = np.square(og_distance_matrix - noise_og_distance_matrix).std()
+    in_noise_stddev = np.square(og_distance_matrix - noise_og_distance_matrix).std()
+    print("in_noise_stddev", in_noise_stddev)
+    return round(in_noise_stddev, 2)
+
 # Calculate the inter-node MSE between the Orginal Distance Matrix and Calculated Coordinates (Calculated Distance Matrix).
 def calculateMSE(og_distance_matrix, cal_coordinates):
     cal_distance_matrix = euclidean_distances(cal_coordinates)
     MSE = np.square(og_distance_matrix - cal_distance_matrix).mean()
-    return round(MSE, 5)
+    print(MSE)
+    return round(MSE, 2)

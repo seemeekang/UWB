@@ -49,11 +49,41 @@ def trilateration(node_to_trilaterate, robust_triangle_nodes, distance_matrix, s
     # print("Tag Coordinate:", tag_coordinates)
     return tag_coordinates
 
+def compute_RTRR(og_distance_matrix, dmin, robust_tri_trilaterate_count):
+    robust_nodes, trilaterated_robust_node_data, untrilated_nodes, robust_triangles, sort_robust_loc  = compute_RQ_algo2(og_distance_matrix, dmin)
+    for non_trilaterated_node in untrilated_nodes:
+        x_list = []
+        y_list = []
+        global trilaterated_loc
+        trilaterated_loc = []  
+        for robust_triangle_no in range(0, robust_tri_trilaterate_count):
+            triangle_nodes = robust_triangles[robust_triangle_no]
+            tag_coordinates = trilateration(non_trilaterated_node, triangle_nodes, og_distance_matrix, sort_robust_loc)
+            x_list.append(tag_coordinates[0])
+            y_list.append(tag_coordinates[1])
+        x_avg = round(sum(x_list) / len(x_list), 2)
+        y_avg = round(sum(y_list) / len(y_list), 2)
+        trilaterated_loc.append([non_trilaterated_node, [x_avg,y_avg]])
+    # print("trilaterated_loc",trilaterated_loc)
+    sort_trilaterated_loc = sorted(trilaterated_loc, key=lambda x: x[0])
+
+    rtrr_node_coordinate = np.array([data[1] for data in sort_trilaterated_loc])
+
+    all_loc = sort_robust_loc
+    all_loc.extend(sort_trilaterated_loc)
+    sort_all_loc = sorted(all_loc, key=lambda x: x[0])
+
+    all_node_coordinates = np.array([data[1] for data in sort_all_loc])
+
+    print("sort_all_loc", sort_all_loc)
+    # print("rtrr_node_coordinate", rtrr_node_coordinate)
+    # print("all_node_coordinates", all_node_coordinates)
+
+    return robust_nodes, trilaterated_robust_node_data, rtrr_node_coordinate, all_node_coordinates
+
+
 
 def main():
-    # Threshold Measurement Noise
-    dmin = 1.0
-
     # Non - Flipped Nodes Example
     # x_og_data = [0,0,2,2,28,10,100]
     # y_og_data = [0,2,0,2,35,80,100]
@@ -74,36 +104,12 @@ def main():
     og_distance_matrix = euclidean_distances(og_coordinates)
     print("Original Distance Matrix \n",og_distance_matrix)
 
-    robust_nodes, trilaterated_robust_node_data, untrilated_nodes, robust_triangles, sort_robust_loc  = compute_RQ_algo2(og_distance_matrix, dmin)
+    # Threshold Measurement Noise
+    dmin = 1.0
 
     robust_tri_trilaterate_count = 3
 
-    for non_trilaterated_node in untrilated_nodes:
-        x_list = []
-        y_list = []
-        trilaterated_loc = []  
-        for robust_triangle_no in range(0, robust_tri_trilaterate_count):
-            triangle_nodes = robust_triangles[robust_triangle_no]
-            tag_coordinates = trilateration(non_trilaterated_node, triangle_nodes, og_distance_matrix, sort_robust_loc)
-            x_list.append(tag_coordinates[0])
-            y_list.append(tag_coordinates[1])
-        x_avg = round(sum(x_list) / len(x_list), 2)
-        y_avg = round(sum(y_list) / len(y_list), 2)
-        trilaterated_loc.append([non_trilaterated_node, [x_avg,y_avg]])
-    sort_trilaterated_loc = sorted(trilaterated_loc, key=lambda x: x[0])
-
-    rtrr_node_coordinate = np.array([data[1] for data in sort_trilaterated_loc])
-
-    all_loc = sort_robust_loc
-    all_loc.extend(sort_trilaterated_loc)
-    sort_all_loc = sorted(all_loc, key=lambda x: x[0])
-
-    print("sort_all_loc", sort_all_loc)
-    print("rtrr_node_coordinate", rtrr_node_coordinate)
-
-
-
-
+    robust_nodes, trilaterated_robust_node_data, rtrr_node_coordinate, all_node_coordinates = compute_RTRR(og_distance_matrix, dmin, robust_tri_trilaterate_count)
 
 
     # Plot the two graphs

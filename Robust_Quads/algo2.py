@@ -78,7 +78,7 @@ def trilaterate_robust_nodes(robust_nodes, robust_quads, distance_matrix):
     sort_loc_best = sorted(loc_best, key=lambda x: x[0])
 
     # print(initial_localized_coordinates)    
-    print("Sorted Loc_best", sort_loc_best)
+    # print("Sorted Loc_best", sort_loc_best)
     # print("trilaterated_robust_nodes", trilaterated_robust_nodes)
     # print("trilaterated_robust_nodes_coordinates", trilaterated_robust_nodes_coordinates)
 
@@ -93,11 +93,11 @@ def compute_RQ_algo2(og_distance_matrix, dmin):
     node_name = list(range(0, node_count))
 
     trilaterated_robust_node_data, sort_loc_best = trilaterate_robust_nodes(robust_nodes, robust_quads, og_distance_matrix)
-    print("trilaterated_robust_node_data", (trilaterated_robust_node_data))
+    # print("trilaterated_robust_node_data", (trilaterated_robust_node_data))
 
     # non_trilaterated_nodes = node_name - robust_nodes
     non_trilaterated_nodes = [node for node in node_name if node not in robust_nodes]
-    print("non_trilaterated_nodes", non_trilaterated_nodes)
+    # print("non_trilaterated_nodes", non_trilaterated_nodes)
 
     return robust_nodes, trilaterated_robust_node_data, non_trilaterated_nodes, robust_tris, sort_loc_best
 
@@ -107,12 +107,12 @@ def main():
     dmin = 1.0
 
     # Non - Flipped Nodes Example
-    # x_og_data = [0,0,2,2,28,10,100]
-    # y_og_data = [0,2,0,2,35,80,100]
+    x_og_data = [0,0,2,2,28,10,100]
+    y_og_data = [0,2,0,2,35,80,100]
 
     # Flipped Nodes Example
-    x_og_data = [0,0,2,2,100]
-    y_og_data = [0,2,0,2,100]
+    # x_og_data = [0,0,2,2,100]
+    # y_og_data = [0,2,0,2,100]
 
     # Total nuber of Anchor nodes
     # node_count = len(x_og_data)

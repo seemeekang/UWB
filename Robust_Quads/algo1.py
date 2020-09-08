@@ -89,13 +89,13 @@ def compute_RQ_algo1(distance_matrix, dmin):
 
     # Node Name List Creation
     node_name = list(range(0, node_count))
-    print("All nodes:", node_name)
+    # print("All nodes:", node_name)
     test_node_comb = list(combinations(node_name,4))
     test_quad_name = []
     for test_quad in test_node_comb:
         if test_quad[0] == 0:
             test_quad_name.append(test_quad)
-    print(test_quad_name)
+    # print("test_quad_name",test_quad_name)
 
     # Create list of Robust Nodes and Robust Quads
     robust_nodes = []
@@ -118,9 +118,9 @@ def compute_RQ_algo1(distance_matrix, dmin):
             # Append the Robust Quad
             robust_quads.append(test_quad)
 
-    print("Robust Nodes", robust_nodes)
+    # print("Robust Nodes", robust_nodes)
     print("Robust Quads", robust_quads)
-    print("Robust Triangles", robust_tris)
+    # print("Robust Triangles", robust_tris)
 
     return robust_nodes, robust_quads, robust_tris
 

@@ -18,7 +18,7 @@ def compute_mds(og_distance_matrix):
 
     # Compute the local coordinates from the Distance Matrix using MDS.
     cal_coordinates = mds.fit(og_distance_matrix).embedding_
-    print("Calculated Coordinates \n",cal_coordinates)
+    # print("Calculated Coordinates \n",cal_coordinates)
 
     return cal_coordinates
 
