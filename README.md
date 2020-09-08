@@ -16,7 +16,7 @@ For a detailed step-by-step guide, check out the [Wiki](https://github.com/jonat
 
 # Table of Contents
 ## [Ultra-wideband (UWB)](https://github.com/jonathanrjpereira/UWB/wiki/Ultra-wideband-(UWB))
-## Implementation Schemes
+## Localization
 * Distance Measuring
   * [Time of Flight (ToF)](https://github.com/jonathanrjpereira/UWB/wiki/Time-of-Flight-(ToF))
   * [Two Way Ranging (TWR) - DWM1001](https://github.com/jonathanrjpereira/UWB/wiki/Two-Way-Ranging-(TWR):-Decawave-DWM1001)
@@ -25,7 +25,9 @@ For a detailed step-by-step guide, check out the [Wiki](https://github.com/jonat
 
 ## Self-Calibrating Anchors
 * [Multidimensional Scaling (MDS)](https://github.com/jonathanrjpereira/UWB/wiki/Multidimensional-Scaling-(MDS))
-* [MDS with 2 DWM1001 Modules](https://github.com/jonathanrjpereira/UWB/wiki/MDS-with-2-DWM1001-Modules)
 * [Initialized Positions](https://github.com/jonathanrjpereira/UWB/wiki/Initialized-Positions)
 * [Robust Quads](https://github.com/jonathanrjpereira/UWB/wiki/Robust-Quads)
 * [Robust Triangle and Radio Range (RTRR)](https://github.com/jonathanrjpereira/UWB/wiki/Robust-Triangle-and-Radio-Range-(RTRR))
+
+## Hardware Implementation
+* [MDS with 2 DWM1001 Modules](https://github.com/jonathanrjpereira/UWB/wiki/MDS-with-2-DWM1001-Modules)
