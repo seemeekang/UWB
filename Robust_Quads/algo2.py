@@ -107,12 +107,12 @@ def main():
     dmin = 1.0
 
     # Non - Flipped Nodes Example
-    x_og_data = [0,0,2,2,28,10,100]
-    y_og_data = [0,2,0,2,35,80,100]
+    # x_og_data = [0,0,2,2,28,10,100]
+    # y_og_data = [0,2,0,2,35,80,100]
 
     # Flipped Nodes Example
-    # x_og_data = [0,0,2,2,100]
-    # y_og_data = [0,2,0,2,100]
+    x_og_data = [0,0,2,2,100]
+    y_og_data = [0,2,0,2,100]
 
     # Total nuber of Anchor nodes
     # node_count = len(x_og_data)
@@ -127,6 +127,7 @@ def main():
 
     robust_nodes, trilaterated_robust_node_data, non_trilaterated_nodes, robust_tris, sort_loc_best = compute_RQ_algo2(og_distance_matrix, dmin)
     print("trilaterated_robust_node_data", (trilaterated_robust_node_data))
+
 
     # Plot the two graphs
     fig = plt.figure()

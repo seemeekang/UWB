@@ -39,3 +39,23 @@ def calculateMSE(og_distance_matrix, cal_coordinates):
     MSE = np.square(og_distance_matrix - cal_distance_matrix).mean()
     print(MSE)
     return round(MSE, 2)
+    
+# Calculate the inter-node MSE for systems with redundant nodes (E.g: Robust Quads).
+def calculateMSE_redundant(og_coordinates, sort_loc_best):
+    og_coordinates_redundant = []
+    for node_count in range(0, len(sort_loc_best)):
+        sort_loc_best_node = sort_loc_best[node_count]
+        sort_loc_best_node_count = sort_loc_best_node[0]
+        # sort_loc_best_node_coordinate = sort_loc_best_node[1]
+
+        og_coordinates_redundant.append(og_coordinates[sort_loc_best_node_count]) 
+
+    print("og_coordinates_redundant", og_coordinates_redundant)
+    og_distance_matrix_redundant = euclidean_distances(og_coordinates_redundant)
+    cal_coordinates = np.array([node[1] for node in sort_loc_best])
+    print("cal_coordinates",cal_coordinates)
+    cal_distance_matrix = euclidean_distances(cal_coordinates)
+    # print("og_distance_matrix_redundant",og_distance_matrix_redundant)
+    MSE = np.square(og_distance_matrix_redundant - cal_distance_matrix).mean()
+    print(MSE)
+    return round(MSE, 2)
