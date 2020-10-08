@@ -27,10 +27,10 @@ def calculate_InputAvgNoise(og_distance_matrix, noise_og_distance_matrix):
     in_noise_avg = np.square(og_distance_matrix - noise_og_distance_matrix).mean()
     return round(in_noise_avg, 2)
 
-def calculateMSE(og_distance_matrix, cal_coordinates):
+def calculate_dist_MSE(og_distance_matrix, cal_coordinates):
     cal_distance_matrix = euclidean_distances(cal_coordinates)
-    MSE = np.square(og_distance_matrix - cal_distance_matrix).mean()
-    return round(MSE, 5)
+    dist_MSE = np.square(og_distance_matrix - cal_distance_matrix).mean()
+    return round(dist_MSE, 5)
 
 def add_noise_distance_matrix(og_distance_matrix):
     node_count = len(og_distance_matrix)
@@ -80,9 +80,9 @@ def main():
 
     # Calculated Coordinate Plot
     cal_coordinates = compute_mds(og_distance_matrix)
-    MSE = calculateMSE(og_distance_matrix, cal_coordinates)
+    anchor_dist_MSE = calculate_dist_MSE(og_distance_matrix, cal_coordinates)
     ax2 = fig.add_subplot(132)
-    ax2.title.set_text("Calculated MDS \n with Avg Distance Error: " + str(MSE))
+    ax2.title.set_text("Calculated MDS \n with Avg Distance Error: " + str(anchor_dist_MSE))
     plt.scatter(cal_coordinates[:, 0], cal_coordinates[:, 1])
 
     # Add noise to input distance matrix
@@ -91,9 +91,9 @@ def main():
 
     # Noisy Input Coordinate Plot
     cal_coordinates = compute_mds(noise_og_distance_matrix)
-    MSE = calculateMSE(og_distance_matrix, cal_coordinates)
+    anchor_dist_MSE = calculate_dist_MSE(og_distance_matrix, cal_coordinates)
     ax2 = fig.add_subplot(133)
-    ax2.title.set_text("Calculated MDS (Noisy Input) \n with Avg Distance Error: " + str(MSE) 
+    ax2.title.set_text("Calculated MDS (Noisy Input) \n with Avg Distance Error: " + str(anchor_dist_MSE) 
     + "\n Noisy Input Avg: " + str(in_noise_avg))
     plt.scatter(cal_coordinates[:, 0], cal_coordinates[:, 1])
 

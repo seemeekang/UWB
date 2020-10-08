@@ -83,7 +83,7 @@ def calculate_InputAvgNoise(og_distance_matrix, noise_og_distance_matrix):
     in_noise_avg = np.square(og_distance_matrix - noise_og_distance_matrix).mean()
     return round(in_noise_avg, 2)
 
-def calculateMSE(og_distance_matrix, cal_coordinates):
+def calculate_dist_MSE(og_distance_matrix, cal_coordinates):
     cal_distance_matrix = euclidean_distances(cal_coordinates)
     MSE = np.square(og_distance_matrix - cal_distance_matrix).mean()
     return round(MSE, 5)
@@ -153,7 +153,7 @@ def main():
 
     # Calculated Coordinate Plot
     cal_coordinates = compute_mds(og_distance_matrix)
-    MSE = calculateMSE(og_distance_matrix, cal_coordinates)
+    MSE = calculate_dist_MSE(og_distance_matrix, cal_coordinates)
     cal_tag_coordinates = compute_tag_location(tag_coordinates, og_coordinates, cal_coordinates, None)
     cal_tag_MSE, cal_tag_MSE_pcnt = tag_distance_matrix_error(tag_coordinates, og_coordinates, cal_tag_coordinates, cal_coordinates)
 
@@ -169,7 +169,7 @@ def main():
 
     # Noisy Input Coordinate Plot with Measured Distance from DWM1001 nodes
     noise_cal_coordinates = compute_mds(noise_og_distance_matrix)
-    noise_MSE = calculateMSE(og_distance_matrix, noise_cal_coordinates)
+    noise_MSE = calculate_dist_MSE(og_distance_matrix, noise_cal_coordinates)
     noise_cal_tag_coordinates = compute_tag_location(tag_coordinates, og_coordinates, noise_cal_coordinates, measured_distance)
     noise_cal_tag_MSE, noise_cal_tag_MSE_pcnt = tag_distance_matrix_error(tag_coordinates, og_coordinates, noise_cal_tag_coordinates, noise_cal_coordinates)
 
