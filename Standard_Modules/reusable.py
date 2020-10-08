@@ -5,6 +5,9 @@ from sklearn.metrics import euclidean_distances
 
 import math
 
+from itertools import combinations  
+from statistics import mean 
+
 # Add noise to a inter-node distance matrix
 def add_noise_distance_matrix(og_distance_matrix):
     node_count = len(og_distance_matrix)
@@ -30,18 +33,32 @@ def calculate_InputAvgNoise(og_distance_matrix, noise_og_distance_matrix):
 def calculate_StdDevNoise(og_distance_matrix, noise_og_distance_matrix):
     # in_noise_stddev = np.square(og_distance_matrix - noise_og_distance_matrix).std()
     in_noise_stddev = np.square(og_distance_matrix - noise_og_distance_matrix).std()
-    print("in_noise_stddev", in_noise_stddev)
+    # print("in_noise_stddev", in_noise_stddev)
     return round(in_noise_stddev, 2)
 
 # Calculate the inter-node MSE between the Orginal Distance Matrix and Calculated Coordinates (Calculated Distance Matrix).
-def calculateMSE(og_distance_matrix, cal_coordinates):
+def calculate_dist_MSE(og_distance_matrix, cal_coordinates):
     cal_distance_matrix = euclidean_distances(cal_coordinates)
-    MSE = np.square(og_distance_matrix - cal_distance_matrix).mean()
-    print(MSE)
-    return round(MSE, 2)
+    dist_MSE = np.square(og_distance_matrix - cal_distance_matrix).mean()
+    # print(dist_MSE)
+    return round(dist_MSE, 2)
+
+# Calculate node location MSE in 2D Euclidean space.
+def calculate_MSE_loc(og_coordinates, cal_coordinates):
+    og_x = [coordinate[0] for coordinate in og_coordinates]
+    og_y = [coordinate[1] for coordinate in og_coordinates]
+    cal_x = [coordinate[0] for coordinate in cal_coordinates]
+    cal_y = [coordinate[1] for coordinate in cal_coordinates]
+
+    sum = 0
+    for node_count in range(0, len(og_coordinates)):
+        sum = sum + pow((cal_x[node_count] - og_x[node_count]), 2) + pow((cal_y[node_count] - og_y[node_count]), 2) 
+    MSE_loc = sum / len(og_coordinates)
+    # print("MSE_loc", MSE_loc)
+    return round(MSE_loc, 2)
     
 # Calculate the inter-node MSE for systems with redundant nodes (E.g: Robust Quads).
-def calculateMSE_redundant(og_coordinates, sort_loc_best):
+def calculate_dist_MSE_redundant(og_coordinates, sort_loc_best):
     # Using Original Coordinates and Sorted Node/Location data from RQ to create a new distance matrix
     # with only coordinates localized by RQ (redundant nodes)
     og_coordinates_redundant = []
@@ -58,9 +75,21 @@ def calculateMSE_redundant(og_coordinates, sort_loc_best):
     # print("cal_coordinates",cal_coordinates)
     cal_distance_matrix = euclidean_distances(cal_coordinates)
     # print("og_distance_matrix_redundant",og_distance_matrix_redundant)
-    MSE = np.square(og_distance_matrix_redundant - cal_distance_matrix).mean()
-    print(MSE)
-    return round(MSE, 2)
+    dist_MSE = np.square(og_distance_matrix_redundant - cal_distance_matrix).mean()
+    # print(dist_MSE)
+    return round(dist_MSE, 2)
+
+# Calculate the node-location in 2D euclidean space MSE for systems with redundant nodes (E.g: Robust Quads).
+def calculate_loc_MSE_redundant(og_coordinates, sort_loc_best):
+    robust_nodes = [node[0] for node in sort_loc_best]
+    calc_robust_node_coordinates = [node[1] for node in sort_loc_best]
+    robust_node_og_coordinates = []
+
+    for node_count in robust_nodes:
+        robust_node_og_coordinates.append(og_coordinates[node_count])
+
+    MSE_loc = calculate_MSE_loc(robust_node_og_coordinates, calc_robust_node_coordinates)
+    return round(MSE_loc, 2)
 
 # Calculate average percentage of nodes that were localizable per cluster.
 def calculate_ClusterSuccessRate(og_distance_matrix, cal_coordinates, total_clusters):
@@ -72,6 +101,85 @@ def calculate_ClusterSuccessRate(og_distance_matrix, cal_coordinates, total_clus
     CSR = (Li/ki) * 100
     # print("CSR", CSR)
     return round(CSR, 2)
+
+def trialateration_get_triangle_list(anchor_coordinates):
+    anchor_node_count = len(anchor_coordinates)
+    
+    # Create a list of triangles formed from the anchor nodes.
+    node_name = list(range(0, anchor_node_count))
+    test_node_comb = list(combinations(node_name,3))
+
+    new_triangles = test_node_comb
+
+    # print("new_triangles", new_triangles)
+    return new_triangles
+
+
+def trilaterate_post_sc(anchor_coordinates, tag_coordinates):
+    # Split anchor coordinates into x,y list.
+    anchor_x = [node[0] for node in  anchor_coordinates]
+    anchor_y = [node[1] for node in  anchor_coordinates]
+
+    # Get list of all triangles formed by anchor nodes
+    triangle_list = trialateration_get_triangle_list(anchor_coordinates)
+
+    cal_tag_coordinates = []
+
+    # For each tag node in the system calculate it's coordinates,
+    # by averaging the tag coordinates computed from each anchor triangle.
+    for tag_node in tag_coordinates:
+        tag_node = np.array(tag_node)
+
+        tag_x = []
+        tag_y = []
+
+        for triangle in triangle_list:
+            # For every triangle decompose it's anchor names
+            node0 = triangle[0]
+            node1 = triangle[1]
+            node2 = triangle[2]
+
+            # Form the tag-triangle distance matrix 
+            anchor_tag_coordinates = np.insert(anchor_coordinates, 0, tag_node, axis=0)
+            anchor_tag_distance_matrix = euclidean_distances(anchor_tag_coordinates)
+
+            # Calculate squared values needed for trilateration
+            r1_sq = pow(anchor_tag_distance_matrix[0,(node0 + 1)],2)
+            r2_sq = pow(anchor_tag_distance_matrix[0,(node1 + 1)],2)
+            r3_sq = pow(anchor_tag_distance_matrix[0,(node2 + 1)],2)
+
+            # Solve a linear matrix equation where x,y is the Tag coordinate:
+            # Ax + By = C
+            # Dx + Ey = F
+            A = (-2*anchor_x[node0]) + (2*anchor_x[node1])
+            B = (-2*anchor_y[node0]) + (2*anchor_y[node1])
+            C = r1_sq - r2_sq - pow(anchor_x[node0],2) + pow(anchor_x[node1],2) - pow(anchor_y[node0],2) + pow(anchor_y[node1],2) 
+            D = (-2*anchor_x[node1]) + (2*anchor_x[node2])
+            E = (-2*anchor_y[node1]) + (2*anchor_y[node2])
+            F = r2_sq - r3_sq - pow(anchor_x[node1],2) + pow(anchor_x[node2],2) - pow(anchor_y[node1],2) + pow(anchor_y[node2],2) 
+
+            a = np.array([[A, B], [D, E]])
+            b = np.array([C, F])
+
+            # Fixes the following error: numpy.linalg.LinAlgError: Singular matrix
+            # numpy.linalg.solve(a, b) Raises LinAlgError If 'a' is singular or not square.
+            # This statement checks if matrix 'a' is Invetible(Not Singular == True). 
+            if ((a.shape[0] == a.shape[1] and np.linalg.matrix_rank(a) == a.shape[0]) == True):
+
+                tag_coordinates = np.linalg.solve(a, b)
+                # print("Tag Coordinate:", tag_coordinates)
+
+                tag_x.append(tag_coordinates[0])
+                tag_y.append(tag_coordinates[1])
+        
+        tag_avg = (mean(tag_x), mean(tag_y)) 
+        cal_tag_coordinates.append(tag_avg)
+
+    cal_tag_coordinates = np.array(cal_tag_coordinates)
+    # print("cal_tag_coordinatese:", cal_tag_coordinates)
+
+    return cal_tag_coordinates
+
 
 
 
