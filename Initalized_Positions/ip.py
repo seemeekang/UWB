@@ -91,10 +91,10 @@ def calculate_InputAvgNoise(og_distance_matrix, noise_og_distance_matrix):
     in_noise_avg = np.square(og_distance_matrix - noise_og_distance_matrix).mean()
     return round(in_noise_avg, 2)
 
-def calculateMSE(og_distance_matrix, cal_coordinates):
+def calculate_dist_MSE(og_distance_matrix, cal_coordinates):
     cal_distance_matrix = euclidean_distances(cal_coordinates)
-    MSE = np.square(og_distance_matrix - cal_distance_matrix).mean()
-    return round(MSE, 5)
+    dist_MSE = np.square(og_distance_matrix - cal_distance_matrix).mean()
+    return round(dist_MSE, 5)
 
 def add_noise_distance_matrix(og_distance_matrix):
     node_count = len(og_distance_matrix)
@@ -144,7 +144,7 @@ def main():
 
     # Plot Initialized Positions Algorithm Output
     ip_coordinates = compute_intialized_positions(og_distance_matrix)
-    ip_MSE = calculateMSE(og_distance_matrix, ip_coordinates)
+    ip_MSE = calculate_dist_MSE(og_distance_matrix, ip_coordinates)
     ax2 = fig.add_subplot(132)
     ax2.title.set_text("Trilaterated Nodes using Initialized Anchors \n Inter-node distance MSE: " + str(ip_MSE))
     plt.scatter(ip_coordinates[:,0], ip_coordinates[:,1])
@@ -157,7 +157,7 @@ def main():
 
     # Plot Noisy Initialized Positions Algorithm Output
     noisy_ip_coordinates = compute_intialized_positions(noise_og_distance_matrix)
-    noisy_ip_MSE = calculateMSE(og_distance_matrix, noisy_ip_coordinates)
+    noisy_ip_MSE = calculate_dist_MSE(og_distance_matrix, noisy_ip_coordinates)
     ax3 = fig.add_subplot(133)
     ax3.title.set_text("Noisy Results \n" + "Avg i/p noise: " + str(in_noise_avg) + 
     "\n Inter-node distance MSE: " + str(noisy_ip_MSE))
