@@ -10,13 +10,16 @@ import math
 
 from itertools import combinations  
 
+from statistics import mean 
+
+
 import sys
 sys.path.insert(1, 'C:/Users/Jonathan/Documents/GitHub/UWB')
 from Standard_Modules.reusable import *
 from MDS.skl_classical_MDS import compute_mds
 from Initalized_Positions.ip import compute_intialized_positions
 from Robust_Quads.algo2 import compute_RQ_algo2 
-from RTRR.RTRR import compute_RTRR
+from RTRR.rtrr import compute_RTRR
 
 # Non - Flipped Nodes Example
 # x_og_data = [0,0,2,2,28,10,100]
@@ -44,42 +47,42 @@ in_noise_stddev = calculate_StdDevNoise(og_distance_matrix, noise_og_distance_ma
 
 # MDS & MDS with noise
 cal_coordinates_MDS = compute_mds(og_distance_matrix)
-MSE_MDS = calculateMSE(og_distance_matrix, cal_coordinates_MDS)
+MSE_MDS = calculate_dist_MSE(og_distance_matrix, cal_coordinates_MDS)
 CSR_MDS = calculate_ClusterSuccessRate(og_distance_matrix, cal_coordinates_MDS, 1)
 
 noise_cal_coordinates_MDS = compute_mds(noise_og_distance_matrix)
-noise_MSE_MDS = calculateMSE(og_distance_matrix, noise_cal_coordinates_MDS)
+noise_MSE_MDS = calculate_dist_MSE(og_distance_matrix, noise_cal_coordinates_MDS)
 noise_CSR_MDS = calculate_ClusterSuccessRate(og_distance_matrix, noise_cal_coordinates_MDS, 1)
 
 # IP & IP with noise
 cal_coordinates_IP = compute_intialized_positions(og_distance_matrix)
-MSE_IP = calculateMSE(og_distance_matrix, cal_coordinates_IP)
+MSE_IP = calculate_dist_MSE(og_distance_matrix, cal_coordinates_IP)
 CSR_IP = calculate_ClusterSuccessRate(og_distance_matrix, cal_coordinates_IP, 1)
 
 noise_cal_coordinates_IP = compute_intialized_positions(noise_og_distance_matrix)
-noise_MSE_IP = calculateMSE(og_distance_matrix, noise_cal_coordinates_IP)
+noise_MSE_IP = calculate_dist_MSE(og_distance_matrix, noise_cal_coordinates_IP)
 noise_CSR_IP = calculate_ClusterSuccessRate(og_distance_matrix, noise_cal_coordinates_IP, 1)
 
 # RQ & RQ with noise
 dmin = 0.3
 robust_nodes, cal_coordinates_RQ, non_trilaterated_nodes, robust_tris, sort_loc_best_RQ = compute_RQ_algo2(og_distance_matrix, dmin)
-MSE_RQ = calculateMSE_redundant(og_coordinates, sort_loc_best_RQ)
+MSE_RQ = calculate_dist_MSE_redundant(og_coordinates, sort_loc_best_RQ)
 CSR_RQ = calculate_ClusterSuccessRate(og_distance_matrix, cal_coordinates_RQ, 1)
 
 robust_nodes, noise_cal_coordinates_RQ, non_trilaterated_nodes, robust_tris, noise_sort_loc_best_RQ = compute_RQ_algo2(noise_og_distance_matrix, dmin)
-noise_MSE_RQ = calculateMSE_redundant(og_coordinates, noise_sort_loc_best_RQ)
+noise_MSE_RQ = calculate_dist_MSE_redundant(og_coordinates, noise_sort_loc_best_RQ)
 noise_CSR_RQ = calculate_ClusterSuccessRate(og_distance_matrix, noise_cal_coordinates_RQ, 1)
 
 # RTRR & RTRR with noise
 # dmin = in_noise_stddev / 3
 robust_tri_trilaterate_count = 3
 robust_nodes, trilaterated_robust_node_data, rtrr_node_coordinate, cal_coordinates_RTRR = compute_RTRR(og_distance_matrix, dmin, robust_tri_trilaterate_count)
-MSE_RTRR = calculateMSE(og_distance_matrix, cal_coordinates_RTRR)
+MSE_RTRR = calculate_dist_MSE(og_distance_matrix, cal_coordinates_RTRR)
 CSR_RTRR = calculate_ClusterSuccessRate(og_distance_matrix, cal_coordinates_RTRR, 1)
 
 
 robust_nodes, trilaterated_robust_node_data, rtrr_node_coordinate, noise_cal_coordinates_RTRR = compute_RTRR(noise_og_distance_matrix, dmin, robust_tri_trilaterate_count)
-noise_MSE_RTRR = calculateMSE(og_distance_matrix, noise_cal_coordinates_RTRR)
+noise_MSE_RTRR = calculate_dist_MSE(og_distance_matrix, noise_cal_coordinates_RTRR)
 noise_CSR_RTRR = calculate_ClusterSuccessRate(og_distance_matrix, noise_cal_coordinates_RTRR, 1)
 
 # Plot the two graphs
